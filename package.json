@@ -1,0 +1,25 @@
+{
+  "name": "zerotrustgrade",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistem Nilai dengan Zero Trust Security \u2014 API Gateway (PEP), Service Nilai, Service Transkrip",
+  "main": "gateway/server.js",
+  "scripts": {
+    "seed": "node shared/seed.js",
+    "setup": "node scripts/setup.js",
+    "dev": "node scripts/dev.js",
+    "start:gateway": "node gateway/server.js",
+    "start:nilai": "node services/nilai/server.js",
+    "start:transkrip": "node services/transkrip/server.js",
+    "audit": "node scripts/audit.js",
+    "test": "node tests/smoke.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
