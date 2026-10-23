@@ -146,6 +146,8 @@ lintas mata kuliah. Transkrip awalnya kosong dan baru terisi setelah finalisasi.
 Semua endpoint resource diakses melalui `http://127.0.0.1:3000`.
 Contoh di bawah memakai `curl`; koleksi Postman tersedia di
 [`postman/ZeroTrustGrade.postman_collection.json`](postman/ZeroTrustGrade.postman_collection.json).
+Panduan pengujian manual dengan Thunder Client ada di
+[`THUNDER_CLIENT.md`](THUNDER_CLIENT.md).
 
 ### 5.1 Login
 
@@ -414,6 +416,9 @@ curl -i -X POST http://127.0.0.1:3000/transkrip/sinkron \
 # 403 SERVICE_TOKEN_REQUIRED
 ```
 
+Panduan lengkap untuk pengujian manual dengan Thunder Client ada di
+[`THUNDER_CLIENT.md`](THUNDER_CLIENT.md).
+
 ### 8.3 Reset data
 
 ```bash
@@ -464,6 +469,7 @@ ZeroTrustGrade/
 │  ├─ dev.js                   # jalankan ketiga komponen berurutan
 │  ├─ setup.js                 # buat .env + secret acak
 │  └─ audit.js                 # tampilkan audit log
+├─ THUNDER_CLIENT.md           # panduan uji manual dengan Thunder Client
 ├─ tests/smoke.js              # 37 pengujian end-to-end
 ├─ postman/                    # koleksi Postman
 └─ docs/
