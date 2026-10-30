@@ -294,7 +294,7 @@ async function main() {
     eq(mhs1.data.expires_in, 600, 'access token 10 menit');
     eq(mhs1.data.refresh_expires_in, 86400, 'refresh token 1 hari');
     eq(mhs1.data.user.role, 'mahasiswa', 'role');
-    eq(mhs1.data.user.nim, '2021001', 'nim');
+    eq(mhs1.data.user.nim, '2470061110700', 'nim');
   });
 
   await test('Request user tanpa X-Device-ID ditolak', async () => {
@@ -317,29 +317,29 @@ async function main() {
     const response = await call(
       GATEWAY,
       'GET',
-      '/nilai?mahasiswa_id=5&nim=2021002',
+      '/nilai?mahasiswa_id=5&nim=2470061110701',
       { token: mhs1.data.access_token, device: 'dev-mhs1-01' },
     );
     eq(response.status, 200, 'status');
     eq(response.data.scope, 'self', 'scope');
     ok(response.data.data.length > 0, 'ada nilai');
     for (const row of response.data.data) {
-      eq(row.nim, '2021001', 'NIM pada hasil');
+      eq(row.nim, '2470061110700', 'NIM pada hasil');
     }
   });
 
   await test('Mahasiswa melihat transkrip sendiri', async () => {
-    const response = await call(GATEWAY, 'GET', '/transkrip/2021001', {
+    const response = await call(GATEWAY, 'GET', '/transkrip/2470061110700', {
       token: mhs1.data.access_token,
       device: 'dev-mhs1-01',
     });
     eq(response.status, 200, 'status');
-    eq(response.data.nim, '2021001', 'nim');
+    eq(response.data.nim, '2470061110700', 'nim');
     eq(response.data.data.length, 0, 'transkrip masih kosong sebelum finalisasi');
   });
 
   await test('Mahasiswa tidak boleh melihat transkrip NIM lain', async () => {
-    const response = await call(GATEWAY, 'GET', '/transkrip/2021002', {
+    const response = await call(GATEWAY, 'GET', '/transkrip/2470061110701', {
       token: mhs1.data.access_token,
       device: 'dev-mhs1-01',
     });
@@ -350,12 +350,12 @@ async function main() {
   await test('Admin login dan melihat transkrip semua NIM', async () => {
     admin = await login('admin', 'Admin#123', 'dev-admin-01');
     eq(admin.status, 200, 'status login');
-    const response = await call(GATEWAY, 'GET', '/transkrip/2021002', {
+    const response = await call(GATEWAY, 'GET', '/transkrip/2470061110701', {
       token: admin.data.access_token,
       device: 'dev-admin-01',
     });
     eq(response.status, 200, 'status transkrip');
-    eq(response.data.nim, '2021002', 'nim');
+    eq(response.data.nim, '2470061110701', 'nim');
   });
 
   await test('Admin tetap tidak boleh mengakses /nilai', async () => {
@@ -468,7 +468,7 @@ async function main() {
   });
 
   await test('Transkrip mahasiswa terisi setelah finalisasi', async () => {
-    const response = await call(GATEWAY, 'GET', '/transkrip/2021001', {
+    const response = await call(GATEWAY, 'GET', '/transkrip/2470061110700', {
       token: mhs1.data.access_token,
       device: 'dev-mhs1-01',
     });
@@ -480,7 +480,7 @@ async function main() {
   });
 
   await test('Dosen tidak boleh mengakses transkrip', async () => {
-    const response = await call(GATEWAY, 'GET', '/transkrip/2021001', {
+    const response = await call(GATEWAY, 'GET', '/transkrip/2470061110700', {
       token: dosen1.data.access_token,
       device: 'dev-dosen1-01',
     });
@@ -532,8 +532,8 @@ async function main() {
     const body = {
       kelas_id: kelas1Id,
       items: [
-        { nim: '2021001', nilai_angka: 86 },
-        { nim: '2021002', nilai_angka: 78 },
+        { nim: '2470061110700', nilai_angka: 86 },
+        { nim: '2470061110701', nilai_angka: 78 },
       ],
     };
     const first = await call(GATEWAY, 'POST', '/transkrip/sinkron', {
@@ -579,7 +579,7 @@ async function main() {
       },
     });
     eq(response.status, 200, 'status');
-    for (const row of response.data.data) eq(row.nim, '2021001', 'scope tetap milik sendiri');
+    for (const row of response.data.data) eq(row.nim, '2470061110700', 'scope tetap milik sendiri');
   });
 
   await test('Access token kedaluwarsa ditolak', async () => {
@@ -587,7 +587,7 @@ async function main() {
       {
         role: 'mahasiswa',
         username: 'mhs1',
-        nim: '2021001',
+        nim: '2470061110700',
         typ: 'access',
       },
       config.jwt.accessSecret,
@@ -659,7 +659,7 @@ async function main() {
     eq(finalize.status, 200, 'finalisasi');
     eq(finalize.data.sync.synced, 2, 'dua nilai');
 
-    const transkrip = await call(GATEWAY, 'GET', '/transkrip/2021002', {
+    const transkrip = await call(GATEWAY, 'GET', '/transkrip/2470061110701', {
       token: admin.data.access_token,
       device: 'dev-admin-01',
     });

@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "ZeroTrustGrade",
-    "description": "Koleksi uji Sistem Nilai Zero Trust. Jalankan folder 01 Auth lebih dulu agar variable token terisi otomatis.",
+    "description": "Koleksi uji Sistem Nilai Zero Trust. Jalankan folder 01 Auth lebih dulu agar variable token terisi otomatis. Folder 05 Demo berisi request tambahan untuk skrip video.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -16,8 +16,12 @@
     { "key": "deviceId", "value": "dev-mhs1-01" },
     { "key": "nilaiId", "value": "1" },
     { "key": "kelasId", "value": "1" },
-    { "key": "nim", "value": "2021001" },
-    { "key": "gatewaySecret", "value": "isi-dari-env-GATEWAY_SECRET" }
+    { "key": "nim", "value": "2470061110700" },
+    { "key": "gatewaySecret", "value": "isi-dari-env-GATEWAY_SECRET" },
+    { "key": "accessTokenDosen2", "value": "" },
+    { "key": "refreshTokenDosen2", "value": "" },
+    { "key": "deviceIdDosen2", "value": "dev-dosen2-01" },
+    { "key": "baseUrlOutside", "value": "http://127.0.0.1:3105" }
   ],
   "item": [
     {
@@ -196,7 +200,7 @@
                 "exec": [
                   "pm.test('hanya nilai sendiri', () => {",
                   "  const body = pm.response.json();",
-                  "  body.data.forEach((row) => pm.expect(row.nim).to.eql('2021001'));",
+                  "  body.data.forEach((row) => pm.expect(row.nim).to.eql('2470061110700'));",
                   "});"
                 ]
               }
@@ -277,7 +281,7 @@
               { "key": "Authorization", "value": "Bearer {{accessTokenAdmin}}" },
               { "key": "X-Device-ID", "value": "dev-admin-01" }
             ],
-            "url": "{{baseUrl}}/transkrip/2021002"
+            "url": "{{baseUrl}}/transkrip/2470061110701"
           }
         },
         {
@@ -290,7 +294,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"kelas_id\": 1,\n  \"items\": [\n    { \"nim\": \"2021001\", \"nilai_angka\": 86 },\n    { \"nim\": \"2021002\", \"nilai_angka\": 78 }\n  ]\n}",
+              "raw": "{\n  \"kelas_id\": 1,\n  \"items\": [\n    { \"nim\": \"2470061110700\", \"nilai_angka\": 86 },\n    { \"nim\": \"2470061110701\", \"nilai_angka\": 78 }\n  ]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": "{{baseUrl}}/transkrip/sinkron"
@@ -343,7 +347,7 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" },
               { "key": "X-Device-ID", "value": "{{deviceId}}" }
             ],
-            "url": "{{baseUrl}}/transkrip/2021002"
+            "url": "{{baseUrl}}/transkrip/2470061110701"
           },
           "event": [
             {
@@ -431,6 +435,369 @@
                   "pm.test('403 SERVICE_TOKEN_REQUIRED', () => {",
                   "  pm.response.to.have.status(403);",
                   "  pm.expect(pm.response.json().error.code).to.eql('SERVICE_TOKEN_REQUIRED');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 Demo",
+      "item": [
+        {
+          "name": "Login Dosen 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "{{deviceIdDosen2}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"dosen2\",\n  \"password\": \"Dosen#123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('accessTokenDosen2', body.access_token);",
+                  "pm.collectionVariables.set('refreshTokenDosen2', body.refresh_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh setelah logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "{{deviceId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('401 REFRESH_REVOKED', () => {",
+                  "  pm.response.to.have.status(401);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('REFRESH_REVOKED');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /nilai (tanpa device)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/nilai"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403 DEVICE_MISSING', () => {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('DEVICE_MISSING');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login device tidak terdaftar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "dev-mhs2-01"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"mhs1\",\n  \"password\": \"Mhs#123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403 DEVICE_NOT_REGISTERED', () => {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('DEVICE_NOT_REGISTERED');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /nilai + query manipulasi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "{{deviceId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/nilai?mahasiswa_id=5&nim=2470061110701"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('scope tetap milik sendiri', () => {",
+                  "  const body = pm.response.json();",
+                  "  body.data.forEach((row) => pm.expect(row.nim).to.eql('2470061110700'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /nilai (dosen 2)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessTokenDosen2}}"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "{{deviceIdDosen2}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/nilai/{{nilaiId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nilai_angka\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403 NOT_OWNER', () => {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('NOT_OWNER');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Direct secret tanpa token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Gateway-Secret",
+                "value": "{{gatewaySecret}}"
+              }
+            ],
+            "url": "{{nilaiUrl}}/nilai"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('401 NO_TOKEN', () => {",
+                  "  pm.response.to.have.status(401);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('NO_TOKEN');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Finalisasi (dosen 2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessTokenDosen2}}"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "{{deviceIdDosen2}}"
+              }
+            ],
+            "url": "{{baseUrl}}/kelas/{{kelasId}}/finalisasi"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403 NOT_OWNER', () => {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('NOT_OWNER');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT nilai setelah final",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessTokenDosen}}"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "dev-dosen1-01"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/nilai/{{nilaiId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nilai_angka\": 90\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('409 ALREADY_FINAL', () => {",
+                  "  pm.response.to.have.status(409);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('ALREADY_FINAL');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT nilai di gateway 3105",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessTokenDosen}}"
+              },
+              {
+                "key": "X-Device-ID",
+                "value": "dev-dosen1-01"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrlOutside}}/nilai/{{nilaiId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nilai_angka\": 70\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403 OUTSIDE_ACCESS_HOURS', () => {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json().error.code).to.eql('OUTSIDE_ACCESS_HOURS');",
                   "});"
                 ]
               }
