@@ -94,50 +94,50 @@ function main() {
   const dosen1Id = insertUser(db, {
     username: 'dosen1',
     password: PASSWORD.dosen,
-    nama: 'Dr. Ani Rahmawati, M.Kom.',
+    nama: 'Prof. Wiener Peter S.Kom, M.Kom, CEH, CCNA, MTCNA, IPU, ASEAN ENG',
     role: 'dosen',
   });
 
   const dosen2Id = insertUser(db, {
     username: 'dosen2',
     password: PASSWORD.dosen,
-    nama: 'Budi Santoso, M.Kom.',
+    nama: 'Carlos M.Kom',
     role: 'dosen',
   });
 
   const mhs1Id = insertUser(db, {
     username: 'mhs1',
     password: PASSWORD.mahasiswa,
-    nama: 'Citra Lestari',
+    nama: 'Yasraf',
     role: 'mahasiswa',
-    nim: '2021001',
+    nim: '2470061110700',
   });
 
   const mhs2Id = insertUser(db, {
     username: 'mhs2',
     password: PASSWORD.mahasiswa,
-    nama: 'Dedi Pratama',
+    nama: 'Syifa',
     role: 'mahasiswa',
-    nim: '2021002',
+    nim: '2470061110701',
   });
 
   const mhs3Id = insertUser(db, {
     username: 'mhs3',
     password: PASSWORD.mahasiswa,
-    nama: 'Eka Putri',
+    nama: 'Maulana',
     role: 'mahasiswa',
-    nim: '2021003',
+    nim: '2470061110702',
   });
 
-  insertDevice(db, adminId, 'dev-admin-01', 'Laptop Admin');
-  insertDevice(db, dosen1Id, 'dev-dosen1-01', 'Laptop Dosen 1');
-  insertDevice(db, dosen2Id, 'dev-dosen2-01', 'Laptop Dosen 2');
-  insertDevice(db, mhs1Id, 'dev-mhs1-01', 'HP Citra');
-  insertDevice(db, mhs2Id, 'dev-mhs2-01', 'HP Dedi');
-  insertDevice(db, mhs3Id, 'dev-mhs3-01', 'HP Eka');
+  insertDevice(db, adminId, 'dev-admin-01', 'Windows 11 Admin');
+  insertDevice(db, dosen1Id, 'dev-dosen1-01', 'Fedora Dosen 1');
+  insertDevice(db, dosen2Id, 'dev-dosen2-01', 'Parrot Dosen 2');
+  insertDevice(db, mhs1Id, 'dev-mhs1-01', 'Arch Linux Yasraf');
+  insertDevice(db, mhs2Id, 'dev-mhs2-01', 'Arch Linux Syifa');
+  insertDevice(db, mhs3Id, 'dev-mhs3-01', 'Arch Linux Maulana');
 
-  const kelasIf101 = insertKelas(db, 'IF101', 'Pemrograman Web', 3, dosen1Id);
-  const kelasIf201 = insertKelas(db, 'IF201', 'Basis Data', 3, dosen2Id);
+  const kelasIf101 = insertKelas(db, 'IF101', 'Keamanan Informasi', 3, dosen1Id);
+  const kelasIf201 = insertKelas(db, 'IF201', 'Komputasi Paralel', 3, dosen2Id);
 
   insertNilai(db, kelasIf101, mhs1Id, 82);
   insertNilai(db, kelasIf101, mhs2Id, 78);
