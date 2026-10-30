@@ -115,11 +115,11 @@ npm run start:gateway
 | Username | Password | Role | Nama | Device ID |
 |---|---|---|---|---|
 | `admin` | `Admin#123` | admin | Admin Prodi Informatika | `dev-admin-01` |
-| `dosen1` | `Dosen#123` | dosen | Dr. Ani Rahmawati, M.Kom. | `dev-dosen1-01` |
-| `dosen2` | `Dosen#123` | dosen | Budi Santoso, M.Kom. | `dev-dosen2-01` |
-| `mhs1` | `Mhs#123` | mahasiswa | Citra Lestari (`2021001`) | `dev-mhs1-01` |
-| `mhs2` | `Mhs#123` | mahasiswa | Dedi Pratama (`2021002`) | `dev-mhs2-01` |
-| `mhs3` | `Mhs#123` | mahasiswa | Eka Putri (`2021003`) | `dev-mhs3-01` |
+| `dosen1` | `Dosen#123` | dosen | Prof. Wiener Peter S.Kom, M.Kom, CEH, CCNA, MTCNA, IPU, ASEAN ENG | `dev-dosen1-01` |
+| `dosen2` | `Dosen#123` | dosen | Carlos M.Kom | `dev-dosen2-01` |
+| `mhs1` | `Mhs#123` | mahasiswa | Yasraf (`2470061110700`) | `dev-mhs1-01` |
+| `mhs2` | `Mhs#123` | mahasiswa | Syifa (`2470061110701`) | `dev-mhs2-01` |
+| `mhs3` | `Mhs#123` | mahasiswa | Maulana (`2470061110702`) | `dev-mhs3-01` |
 
 Setiap user hanya memiliki **satu device terdaftar** pada data awal.
 
@@ -127,8 +127,8 @@ Setiap user hanya memiliki **satu device terdaftar** pada data awal.
 
 | Kode | Mata Kuliah | SKS | Dosen | Mahasiswa | Nilai awal |
 |---|---|---|---|---|---|
-| `IF101` | Pemrograman Web | 3 | dosen1 | mhs1, mhs2 | 82, 78 |
-| `IF201` | Basis Data | 3 | dosen2 | mhs2, mhs3 | 88, 91 |
+| `IF101` | Keamanan Informasi | 3 | dosen1 | mhs1, mhs2 | 82, 78 |
+| `IF201` | Komputasi Paralel | 3 | dosen2 | mhs2, mhs3 | 88, 91 |
 
 `mhs2` sengaja terdaftar di dua kelas untuk menguji isolasi data dan transkrip
 lintas mata kuliah. Transkrip awalnya kosong dan baru terisi setelah finalisasi.
@@ -146,8 +146,6 @@ lintas mata kuliah. Transkrip awalnya kosong dan baru terisi setelah finalisasi.
 Semua endpoint resource diakses melalui `http://127.0.0.1:3000`.
 Contoh di bawah memakai `curl`; koleksi Postman tersedia di
 [`postman/ZeroTrustGrade.postman_collection.json`](postman/ZeroTrustGrade.postman_collection.json).
-Panduan pengujian manual dengan Thunder Client ada di
-[`THUNDER_CLIENT.md`](THUNDER_CLIENT.md).
 
 ### 5.1 Login
 
@@ -167,8 +165,8 @@ Response:
   "expires_in": 600,
   "refresh_token": "<token acak 1 hari>",
   "refresh_expires_in": 86400,
-  "user": { "id": 4, "username": "mhs1", "role": "mahasiswa", "nim": "2021001" },
-  "device": { "id": "dev-mhs1-01", "label": "HP Citra" }
+  "user": { "id": 4, "username": "mhs1", "role": "mahasiswa", "nim": "2470061110700" },
+  "device": { "id": "dev-mhs1-01", "label": "Arch Linux Yasraf" }
 }
 ```
 
@@ -224,7 +222,7 @@ Nilai huruf dihitung server: `>=85 A`, `>=75 B`, `>=65 C`, `>=55 D`, selain itu 
 
 ```bash
 # Mahasiswa (NIM sendiri) atau admin (semua NIM)
-curl -s http://127.0.0.1:3000/transkrip/2021001 \
+curl -s http://127.0.0.1:3000/transkrip/2470061110700 \
   -H "Authorization: Bearer $TOKEN" \
   -H 'X-Device-ID: dev-mhs1-01'
 
@@ -235,8 +233,8 @@ curl -s -X POST http://127.0.0.1:3000/transkrip/sinkron \
   -d '{
     "kelas_id": 1,
     "items": [
-      { "nim": "2021001", "nilai_angka": 86 },
-      { "nim": "2021002", "nilai_angka": 78 }
+      { "nim": "2470061110700", "nilai_angka": 86 },
+      { "nim": "2470061110701", "nilai_angka": 78 }
     ]
   }'
 ```
@@ -403,7 +401,7 @@ curl -i http://127.0.0.1:3000/nilai \
 # 403 DEVICE_NOT_REGISTERED
 
 # 3. Mahasiswa melihat transkrip orang lain
-curl -i http://127.0.0.1:3000/transkrip/2021002 \
+curl -i http://127.0.0.1:3000/transkrip/2470061110701 \
   -H "Authorization: Bearer $TOKEN" \
   -H 'X-Device-ID: dev-mhs1-01'
 # 403 NOT_OWNER
@@ -415,9 +413,6 @@ curl -i -X POST http://127.0.0.1:3000/transkrip/sinkron \
   -H 'Content-Type: application/json' -d '{}'
 # 403 SERVICE_TOKEN_REQUIRED
 ```
-
-Panduan lengkap untuk pengujian manual dengan Thunder Client ada di
-[`THUNDER_CLIENT.md`](THUNDER_CLIENT.md).
 
 ### 8.3 Reset data
 
@@ -469,7 +464,6 @@ ZeroTrustGrade/
 │  ├─ dev.js                   # jalankan ketiga komponen berurutan
 │  ├─ setup.js                 # buat .env + secret acak
 │  └─ audit.js                 # tampilkan audit log
-├─ THUNDER_CLIENT.md           # panduan uji manual dengan Thunder Client
 ├─ tests/smoke.js              # 37 pengujian end-to-end
 ├─ postman/                    # koleksi Postman
 └─ docs/
